@@ -1,5 +1,5 @@
 [build]
-  # No hay paso de build: es un solo archivo HTML autocontenido.
+  # No hay paso de build: index.html + manifest.json + sw.js + iconos, publicados tal cual.
   publish = "."
 
 [[headers]]

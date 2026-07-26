@@ -46,6 +46,24 @@ Simplemente abre `index.html` haciendo doble clic, o arrástralo a una pestaña 
 - Si varias personas necesitan ver y editar exactamente la misma información al mismo tiempo desde distintos dispositivos, esta versión simple no lo permite — para eso sirve la versión con Supabase que armamos antes (`gestion-politica-fase1.zip`), donde los datos sí viven en una base de datos central.
 - Para uso individual (como manejas MrNetflix), esta versión es la más simple posible: un archivo, un link, sin piezas que se puedan romper.
 
+## Instalarla como app (con tu logo y nombre)
+
+Una vez publicada en Netlify (necesita `https://`, no funciona abriendo el archivo directo), la app se puede "instalar" como cualquier app nativa, con tu ícono y el nombre "Gestión Política" en la pantalla de inicio:
+
+**En Android (Chrome):**
+1. Abre el link de Netlify.
+2. Toca el menú ⋮ (tres puntos) → **"Instalar app"** o **"Agregar a pantalla de inicio"**.
+3. Confirma — aparecerá el ícono y el nombre en el celular, y al abrirla se ve como una app independiente (sin la barra del navegador).
+
+**En iPhone (Safari):**
+1. Abre el link de Netlify.
+2. Toca el botón compartir (el cuadrito con la flecha hacia arriba).
+3. Elige **"Agregar a pantalla de inicio"**.
+
+**En computador (Chrome/Edge):** aparece un ícono de instalación (⊕ o pantalla con flecha) en la barra de direcciones, a la derecha.
+
+Esto funciona gracias a tres archivos que ya vienen incluidos: `manifest.json` (nombre e íconos de la app), `sw.js` (requisito técnico de Chrome para poder instalarla) y la carpeta `icons/` con tu logo en varios tamaños. No necesitas tocar nada de esto — ya está listo, solo publica en Netlify como se explica arriba.
+
 ## Próximos ajustes
 
 Si más adelante quieres agregar sincronización entre tu computador y tu celular (como el servidor local de PowerShell de MrNetflix), se puede sumar sin rehacer nada de lo ya construido — solo se agregaría una forma de compartir el archivo de respaldo (`.json`) automáticamente en vez de hacerlo manual.
