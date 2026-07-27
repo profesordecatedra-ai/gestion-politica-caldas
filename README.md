@@ -42,9 +42,11 @@ Simplemente abre `index.html` haciendo doble clic, o arrástralo a una pestaña 
 
 ## Importante sobre los datos
 
-- Esta versión **no tiene usuarios ni contraseñas** — cualquiera con el link puede usar la app, pero cada quien ve solo lo que tiene guardado en su propio navegador (no hay una base de datos compartida en la nube).
-- Si varias personas necesitan ver y editar exactamente la misma información al mismo tiempo desde distintos dispositivos, esta versión simple no lo permite — para eso sirve la versión con Supabase que armamos antes (`gestion-politica-fase1.zip`), donde los datos sí viven en una base de datos central.
-- Para uso individual (como manejas MrNetflix), esta versión es la más simple posible: un archivo, un link, sin piezas que se puedan romper.
+- **Ahora sí hay sincronización en la nube** (Netlify Blobs, sin Supabase): cada vez que guardas algo, se envía automáticamente a un almacenamiento central de Netlify, y cada vez que abres la app (en el celular, el PC, o donde sea) trae esos datos actualizados. Así ya no depende de un solo navegador ni de un solo archivo.
+- Esto **solo funciona una vez publicada en Netlify** (necesita las funciones serverless activas). Si abres el archivo directo con doble clic (`file://`), sigue funcionando con almacenamiento local únicamente, sin sincronizar — es una limitación de los navegadores, no de la app.
+- Arriba a la derecha verás un indicador: **☁ Sincronizado** (todo guardado en la nube), **☁ Guardando…** (subiendo el último cambio), o **⚠ Solo en este dispositivo** (sin conexión a la función de sincronización — revisa tu internet o que el sitio esté bien publicado).
+- Esta versión **no tiene usuarios ni contraseñas** — cualquiera con el link ve y edita la misma información compartida (no hay cuentas separadas por persona). Si necesitas que cada usuario tenga su propio inicio de sesión y permisos, esa es la versión con Supabase (`gestion-politica-fase1.zip`).
+- Aun con la sincronización activa, sigue siendo buena práctica exportar un respaldo (`.json`) de vez en cuando desde Configuración.
 
 ## Instalarla como app (con tu logo y nombre)
 

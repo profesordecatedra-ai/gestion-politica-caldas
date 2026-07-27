@@ -1,0 +1,9 @@
+{
+  "name": "gestion-politica-simple",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Centro de Gestión Política — versión simple con sincronización en la nube (Netlify Blobs).",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

@@ -223,6 +223,7 @@
     <header>
       <h1 id="pageTitle">Inicio</h1>
       <div style="display:flex;align-items:center;gap:8px;">
+        <span id="syncStatus" style="font-size:11px;font-weight:600;white-space:nowrap;"></span>
         <button class="btn btn-secondary" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar fondo claro/oscuro"></button>
         <button class="btn btn-primary" id="headerAddBtn" onclick="openCreateForCurrentView()">+ Agregar</button>
       </div>
@@ -465,6 +466,78 @@ function saveDB(dbToSave){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dbToSave));
   } catch(e){
     warnStorageBlocked();
+  }
+  queueCloudSync(dbToSave);
+}
+
+/* =========================================================
+   Sincronización en la nube (Netlify Blobs vía función serverless)
+   — así los datos no dependen de un solo navegador/archivo: se
+   guardan en un lugar central y se traen de vuelta en cualquier
+   dispositivo que abra el mismo link publicado en Netlify.
+   Si no hay conexión o la función no existe (por ejemplo abriendo
+   el archivo directo con file://), la app sigue funcionando
+   normalmente solo con almacenamiento local.
+   ========================================================= */
+const CLOUD_ENDPOINT = '/api/data';
+let cloudSyncTimer = null;
+let cloudAvailable = null; // null = aún no se sabe, true/false una vez se intenta
+
+function setSyncStatus(state){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  const map = {
+    synced: { text: '☁ Sincronizado', color: 'var(--leaf-400)' },
+    syncing: { text: '☁ Guardando…', color: 'var(--gold-400)' },
+    offline: { text: '⚠ Solo en este dispositivo', color: 'var(--coral-400)' },
+  };
+  const s = map[state] || map.offline;
+  el.textContent = s.text;
+  el.style.color = s.color;
+}
+
+function queueCloudSync(dbToSave){
+  if(cloudAvailable === false) { setSyncStatus('offline'); return; }
+  clearTimeout(cloudSyncTimer);
+  setSyncStatus('syncing');
+  cloudSyncTimer = setTimeout(() => pushToCloud(dbToSave), 700);
+}
+
+async function pushToCloud(dbToSave){
+  try {
+    const res = await fetch(CLOUD_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dbToSave),
+    });
+    if(!res.ok) throw new Error('respuesta no válida');
+    cloudAvailable = true;
+    setSyncStatus('synced');
+  } catch(e){
+    cloudAvailable = false;
+    setSyncStatus('offline');
+  }
+}
+
+async function pullFromCloud(){
+  try {
+    const res = await fetch(CLOUD_ENDPOINT);
+    if(!res.ok) throw new Error('respuesta no válida');
+    const json = await res.json();
+    cloudAvailable = true;
+    if(json && json.data && Array.isArray(json.data.projects) && json.data.projects.length){
+      db = json.data;
+      if(!db.messageTemplates) db.messageTemplates = defaultTemplates();
+      if(!db.territories) db.territories = [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      memoryDB = db;
+      renderAll();
+      toast('Datos sincronizados desde la nube ✓', 'success');
+    }
+    setSyncStatus('synced');
+  } catch(e){
+    cloudAvailable = false;
+    setSyncStatus('offline');
   }
 }
 
@@ -1525,6 +1598,8 @@ function renderAll(){
 }
 
 renderAll();
+setSyncStatus('syncing');
+pullFromCloud();
 
 // Registra el service worker (necesario para que Chrome ofrezca "Instalar app").
 // Solo funciona cuando el sitio está publicado en http/https (por ejemplo en Netlify);

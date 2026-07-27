@@ -1,6 +1,7 @@
 [build]
   # No hay paso de build: index.html + manifest.json + sw.js + iconos, publicados tal cual.
   publish = "."
+  functions = "netlify/functions"
 
 [[headers]]
   for = "/*"
